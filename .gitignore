@@ -1,0 +1,8 @@
+# virtualenv
+venv
+
+# IDE file
+.idea
+
+# useless file
+.coverage
