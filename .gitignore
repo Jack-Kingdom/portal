@@ -6,3 +6,6 @@ venv
 
 # useless file
 .coverage
+
+# compiled tmp file
+__pycache__
