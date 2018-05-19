@@ -1,8 +1,7 @@
-import tornado.ioloop
-import tornado.web
+from tornado import web
 
 
-class ShortURLHandler(tornado.web.RequestHandler):
+class ShortURLHandler(web.RequestHandler):
 
     def post(self, *args, **kwargs):
         pass
@@ -17,7 +16,7 @@ class ShortURLHandler(tornado.web.RequestHandler):
         self.write("Hello, world")
 
 
-class AliasHandler(tornado.web.RequestHandler):
+class AliasHandler(web.RequestHandler):
     def post(self, *args, **kwargs):
         pass
 
@@ -32,13 +31,8 @@ class AliasHandler(tornado.web.RequestHandler):
 
 
 def make_app():
-    return tornado.web.Application([
+    return web.Application([
         (r"/api/v1/shortURL", ShortURLHandler),
+        (r"/api/v1/shortURL/([0-9a-zA-Z\-_.~]+)", ShortURLHandler),
         (r"/api/v1/alias", AliasHandler),
     ])
-
-
-if __name__ == "__main__":
-    app = make_app()
-    app.listen(8888)
-    tornado.ioloop.IOLoop.current().start()
