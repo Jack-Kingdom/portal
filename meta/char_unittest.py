@@ -11,7 +11,7 @@ class CharUnitTest(unittest.TestCase):
     def test_contains(self):
         for i in range(128):
             c = chr(i)
-            if self.re_expr.match(c):
+            if self.re_expr.fullmatch(c):
                 self.assertIn(c, url_unreserved_characters)
             else:
                 self.assertNotIn(c, url_unreserved_characters)
@@ -21,7 +21,7 @@ class CharUnitTest(unittest.TestCase):
         should_length = 0
         for i in range(128):
             c = chr(i)
-            if self.re_expr.match(c):
+            if self.re_expr.fullmatch(c):
                 should_length += 1
 
         self.assertEqual(should_length, url_unreserved_characters_length)
