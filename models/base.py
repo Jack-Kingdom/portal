@@ -4,8 +4,6 @@ wrapped some shared function here
 """
 
 import os
-import sqlite3
-import pyodbc
 from config import CONFIG
 
 
@@ -28,8 +26,10 @@ class BaseModel(object):
         self.template = template
 
         if CONFIG['DATABASE_URI']:
+            pyodbc = __import__('pyodbc')
             self.conn = pyodbc.connect(CONFIG['DATABASE_URI'])
         else:
+            sqlite3 = __import__('sqlite3')
             self.conn = sqlite3.connect(os.path.join(os.curdir, 'database.sqlite'))
 
         with self.get_cursor() as cursor:
