@@ -4,8 +4,11 @@ venv
 # IDE file
 .idea
 
-# useless file
+# temp generated file
 .coverage
+
+# test db file
+*.sqlite
 
 # compiled tmp file
 __pycache__

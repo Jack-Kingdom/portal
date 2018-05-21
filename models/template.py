@@ -1,3 +1,8 @@
+"""
+sql template for CURD operation.
+used prepare statement to avoid sql injection.
+"""
+
 shortURL_template = {
     'init': """
 CREATE TABLE IF NOT EXISTS shortURL (
@@ -6,13 +11,13 @@ CREATE TABLE IF NOT EXISTS shortURL (
 );
     """,
     'insert': """
-INSERT INTO shortURL VALUES (NULL ,'https://baidu.com');
+INSERT INTO shortURL VALUES (NULL ,?);
     """,
     'update': """
-UPDATE shortURL SET dst='https://google.com' WHERE id=3;
+UPDATE shortURL SET dst= ? WHERE id= ?;
     """,
     'query': """
-SELECT dst FROM shortURL WHERE id=3;
+SELECT dst FROM shortURL WHERE id=?;
     """,
     'delete': """
 DELETE FROM shortURL WHERE id=2;
