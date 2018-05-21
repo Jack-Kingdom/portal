@@ -20,7 +20,7 @@ UPDATE shortURL SET dst= ? WHERE id= ?;
 SELECT dst FROM shortURL WHERE id=?;
     """,
     'delete': """
-DELETE FROM shortURL WHERE id=2;
+DELETE FROM shortURL WHERE id=?;
     """
 }
 
@@ -32,15 +32,15 @@ CREATE TABLE IF NOT EXISTS alias (
 );
     """,
     'insert': """
-INSERT INTO shortURL VALUES (NULL ,'https://baidu.com');
-    """,
+    INSERT INTO alias VALUES (NULL ,?);
+        """,
     'update': """
-
-    """,
+    UPDATE alias SET dst= ? WHERE src= ?;
+        """,
     'query': """
-
-    """,
+    SELECT dst FROM alias WHERE src=?;
+        """,
     'delete': """
-
-    """
+    DELETE FROM alias WHERE src=?;
+        """
 }
