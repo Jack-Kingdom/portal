@@ -11,10 +11,11 @@ from utils import decr
 class Validator(object):
     def __init__(self):
         self.unresolved_char_re = re.compile(r'[0-9a-zA-Z\-_.~]+')
+        self.url_legal_re = re.compile(
+            r"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$")
 
-    def contains_unresolved_char_only(self, url):
+    def is_contains_unresolved_char_only(self, url):
         return bool(self.unresolved_char_re.fullmatch(url))
 
     def is_url_legal(self, url):
-        pass
-        # todo add url legal check here
+        return bool(self.url_legal_re.fullmatch(url))
