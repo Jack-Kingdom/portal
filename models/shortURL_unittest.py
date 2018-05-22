@@ -42,7 +42,3 @@ class ShortURLModelUnitTest(unittest.TestCase):
         self.assertEqual(self.m.retrieve(src), dst)
         self.m.delete(src)
         self.assertIsNone(self.m.retrieve(src))
-
-
-if __name__ == '__main__':
-    unittest.main()
