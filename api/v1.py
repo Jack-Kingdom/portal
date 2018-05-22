@@ -11,18 +11,19 @@ class ShortURLHandler(web.RequestHandler):
 
         self.model = ShortURLModel()
 
-    def post(self):
+    def post(self, *args):
+        if args:
+            raise web.HTTPError(404)
+
         data = escape.json_decode(self.request.body)
         if 'dst' not in data:
-            self.set_status(400)
-            return self.write('dst url must be supplied.')
+            raise web.HTTPError(400, 'dst url must be supplied.')
 
         dst = data['dst']
 
         v = Validator()
         if not v.is_url_legal(dst):
-            self.set_status(400)
-            return self.write('dst url illegal.')
+            raise web.HTTPError(400, 'dst url illegal.')
 
         src = self.model.insert(data['dst'])
 
@@ -32,21 +33,19 @@ class ShortURLHandler(web.RequestHandler):
         v = Validator()
         if not v.is_contains_unresolved_char_only(src):
             self.set_status(400)
-            return self.write('src url can only contains unresolved char.')
+            raise web.HTTPError(400, 'src url can only contains unresolved char.')
 
         self.model.delete(src)
 
     def put(self, src):
         data = escape.json_decode(self.request.body)
         if 'dst' not in data:
-            self.set_status(400)
-            return self.write('dst url must be supplied.')
+            raise web.HTTPError(400, 'dst url must be supplied.')
 
         dst = data['dst']
         v = Validator()
         if not v.is_url_legal(dst):
-            self.set_status(400)
-            return self.write('dst url illegal.')
+            raise web.HTTPError(400, 'dst url illegal.')
 
         self.model.update(src, dst)
 
@@ -55,8 +54,7 @@ class ShortURLHandler(web.RequestHandler):
         if dst:
             self.redirect(dst, status=CONFIG['REDIRECT_STATUS_CODE'])
         else:
-            self.set_status(404)
-            self.write('Not Found.')
+            raise web.HTTPError(404)
 
 
 class AliasHandler(web.RequestHandler):
@@ -75,8 +73,8 @@ class AliasHandler(web.RequestHandler):
 
 def make_app():
     return web.Application([
-        (r"/api/v1/shortURL", ShortURLHandler),
-        (r"/api/v1/shortURL/([0-9a-zA-Z\-_.~]+)", ShortURLHandler),
+        (r"^/api/v1/shortURL$", ShortURLHandler),
+        (r"^/api/v1/shortURL/([0-9a-zA-Z\-_.~]+)$", ShortURLHandler),
         (r"/api/v1/alias", AliasHandler),
         (r"/api/v1/alias/([0-9a-zA-Z\-_.~]+)", AliasHandler),
     ], debug=CONFIG['DEBUG'])
