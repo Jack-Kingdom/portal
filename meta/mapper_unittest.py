@@ -10,7 +10,3 @@ class MapperUnitTest(unittest.TestCase):
         converted_uri = num2uri(random_num)
         restored_num = uri2num(converted_uri)
         self.assertEqual(random_num, restored_num)
-
-
-if __name__ == '__main__':
-    unittest.main()

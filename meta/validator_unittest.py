@@ -28,7 +28,3 @@ class ValidatorUnitTest(unittest.TestCase):
 
         self.assertFalse(v.is_url_legal('123'))
         self.assertFalse(v.is_url_legal('http:example.org'))
-
-
-if __name__ == '__main__':
-    unittest.main()

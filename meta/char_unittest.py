@@ -25,7 +25,3 @@ class CharUnitTest(unittest.TestCase):
                 should_length += 1
 
         self.assertEqual(should_length, url_unreserved_characters_length)
-
-
-if __name__ == '__main__':
-    unittest.main()
