@@ -2,6 +2,7 @@
 : << 'COMMENT'
 generate coverage report for unittest
 COMMENT
+
 set -e
 
 if [ -e ./.coverage ]
