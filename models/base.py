@@ -35,5 +35,8 @@ class BaseModel(object):
         with self.get_cursor() as cursor:
             cursor.execute(template['init'])
 
+    def __del__(self):
+        self.conn.close()
+
     def get_cursor(self):
         return Cursor(self.conn)

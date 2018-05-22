@@ -1,19 +1,62 @@
-from tornado import web
+from tornado import web, escape
+from config import CONFIG
+from meta.validator import Validator
+from models import ShortURLModel
 
 
 class ShortURLHandler(web.RequestHandler):
 
-    def post(self, *args, **kwargs):
-        pass
+    def __init__(self, application, request, **kwargs):
+        super(ShortURLHandler, self).__init__(application, request, **kwargs)
 
-    def delete(self, *args, **kwargs):
-        pass
+        self.model = ShortURLModel()
 
-    def put(self, *args, **kwargs):
-        pass
+    def post(self):
+        data = escape.json_decode(self.request.body)
+        if 'dst' not in data:
+            self.set_status(400)
+            return self.write('dst url must be supplied.')
 
-    def get(self):
-        self.write("Hello, world")
+        dst = data['dst']
+
+        v = Validator()
+        if not v.is_url_legal(dst):
+            self.set_status(400)
+            return self.write('dst url illegal.')
+
+        src = self.model.insert(data['dst'])
+
+        self.write(escape.json_encode({'src': src, 'dst': dst}))
+
+    def delete(self, src):
+        v = Validator()
+        if not v.is_contains_unresolved_char_only(src):
+            self.set_status(400)
+            return self.write('src url can only contains unresolved char.')
+
+        self.model.delete(src)
+
+    def put(self, src):
+        data = escape.json_decode(self.request.body)
+        if 'dst' not in data:
+            self.set_status(400)
+            return self.write('dst url must be supplied.')
+
+        dst = data['dst']
+        v = Validator()
+        if not v.is_url_legal(dst):
+            self.set_status(400)
+            return self.write('dst url illegal.')
+
+        self.model.update(src, dst)
+
+    def get(self, src):
+        dst = self.model.retrieve(src)
+        if dst:
+            self.redirect(dst, status=CONFIG['REDIRECT_STATUS_CODE'])
+        else:
+            self.set_status(404)
+            self.write('Not Found.')
 
 
 class AliasHandler(web.RequestHandler):
@@ -35,4 +78,5 @@ def make_app():
         (r"/api/v1/shortURL", ShortURLHandler),
         (r"/api/v1/shortURL/([0-9a-zA-Z\-_.~]+)", ShortURLHandler),
         (r"/api/v1/alias", AliasHandler),
-    ])
+        (r"/api/v1/alias/([0-9a-zA-Z\-_.~]+)", AliasHandler),
+    ], debug=CONFIG['DEBUG'])

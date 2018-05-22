@@ -11,10 +11,13 @@ CREATE TABLE IF NOT EXISTS shortURL (
 );
     """,
     'insert': """
+BEGIN IMMEDIATE;
 INSERT INTO shortURL VALUES (NULL ,?);
+SELECT id FROM shortURL ORDER BY id DESC LIMIT 1;
+END;
     """,
     'update': """
-UPDATE shortURL SET dst= ? WHERE id= ?;
+UPDATE shortURL SET dst=? WHERE id=?;
     """,
     'query': """
 SELECT dst FROM shortURL WHERE id=?;
@@ -32,15 +35,15 @@ CREATE TABLE IF NOT EXISTS alias (
 );
     """,
     'insert': """
-    INSERT INTO alias VALUES (NULL ,?);
+INSERT INTO alias VALUES (NULL ,?);
         """,
     'update': """
-    UPDATE alias SET dst= ? WHERE src= ?;
+UPDATE alias SET dst=? WHERE src=?;
         """,
     'query': """
-    SELECT dst FROM alias WHERE src=?;
+SELECT dst FROM alias WHERE src=?;
         """,
     'delete': """
-    DELETE FROM alias WHERE src=?;
+DELETE FROM alias WHERE src=?;
         """
 }

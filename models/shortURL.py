@@ -16,18 +16,29 @@ class ShortURLModel(BaseModel):
         if not v.is_url_legal(dst):
             raise ValueError('dst url not illegal')
 
+        logger.info('create shortURL for dst: {uri}'.format(uri=dst))
+
         with self.get_cursor() as cursor:
-            cursor.execute(self.template['insert'], [dst])
+            for line in self.template['insert'].split('\n'):
+                if '?' in line:
+                    cursor.execute(line, (dst,))
+                else:
+                    cursor.execute(line)
+                    if 'select'.upper() in line:
+                        num, = cursor.fetchone()
             self.conn.commit()
+        return mapper.num2uri(int(num))
 
     def delete(self, src: str):
         v = Validator()
         if not v.is_contains_unresolved_char_only(src):
             return ValueError('src url can only contains unresolved char')
 
+        logger.info('delete shortURL for src: {uri}'.format(uri=src))
+
         num = mapper.uri2num(src)
         with self.get_cursor() as cursor:
-            cursor.execute(self.template['delete'], [num])
+            cursor.execute(self.template['delete'], (num,))
             self.conn.commit()
 
     def update(self, src: str, dst: str):
@@ -37,9 +48,12 @@ class ShortURLModel(BaseModel):
         if not v.is_url_legal(dst):
             raise ValueError('dst url not illegal')
 
+        logger.info('update shortURL from src: {src_uri} to dst: {dst_uri}'.format(
+            src_uri=src, dst_uri=dst))
+
         num = mapper.uri2num(src)
         with self.get_cursor() as cursor:
-            cursor.execute(self.template['update'], [num, dst])
+            cursor.execute(self.template['update'], (dst, num))
             self.conn.commit()
 
     def retrieve(self, src: str):
@@ -47,7 +61,12 @@ class ShortURLModel(BaseModel):
         if not v.is_contains_unresolved_char_only(src):
             return ValueError('src url can only contains unresolved char')
 
+        logger.info('retrieve shortURL from src: {uri}'.format(uri=src))
+
         num = mapper.uri2num(src)
         with self.get_cursor() as cursor:
             cursor.execute(self.template['query'], [num])
-            cursor.fetchall()
+            dst = cursor.fetchone()
+            dst = dst[0] if type(dst) is tuple else None
+
+        return dst
