@@ -18,7 +18,7 @@ class AliasModel(BaseModel):
             raise ValueError('dst url not illegal')
 
         if self.retrieve(src):
-            return False, 'alias has exists.'
+            return False, 'alias src has exists.'
 
         with self.get_cursor() as cursor:
             cursor.execute(self.template['insert'], (src, dst))
@@ -30,9 +30,13 @@ class AliasModel(BaseModel):
         if not v.is_contains_unresolved_char_only(src):
             return ValueError('src url can only contains unresolved char')
 
+        if not self.retrieve(src):
+            return False, 'alias src not exist.'
+
         with self.get_cursor() as cursor:
             cursor.execute(self.template['delete'], (src,))
             self.conn.commit()
+        return True, None
 
     def update(self, src: str, dst: str):
         v = Validator()
@@ -41,9 +45,13 @@ class AliasModel(BaseModel):
         if not v.is_url_legal(dst):
             raise ValueError('dst url not illegal')
 
+        if not self.retrieve(src):
+            return False, 'alias src not exist.'
+
         with self.get_cursor() as cursor:
             cursor.execute(self.template['update'], (src, dst))
             self.conn.commit()
+        return True, None
 
     def retrieve(self, src: str):
         v = Validator()

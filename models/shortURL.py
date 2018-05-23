@@ -27,7 +27,7 @@ class ShortURLModel(BaseModel):
                     if 'select'.upper() in line:
                         num, = cursor.fetchone()
             self.conn.commit()
-        return mapper.num2uri(int(num))
+        return True, mapper.num2uri(int(num))
 
     def delete(self, src: str):
         v = Validator()
@@ -36,10 +36,14 @@ class ShortURLModel(BaseModel):
 
         logger.info('delete shortURL for src: {uri}'.format(uri=src))
 
+        if not self.retrieve(src):
+            return False, 'shortURL src not exist.'
+
         num = mapper.uri2num(src)
         with self.get_cursor() as cursor:
             cursor.execute(self.template['delete'], (num,))
             self.conn.commit()
+        return True, None
 
     def update(self, src: str, dst: str):
         v = Validator()
@@ -51,10 +55,14 @@ class ShortURLModel(BaseModel):
         logger.info('update shortURL from src: {src_uri} to dst: {dst_uri}'.format(
             src_uri=src, dst_uri=dst))
 
+        if not self.retrieve(src):
+            return False, 'shortURL src not exist.'
+
         num = mapper.uri2num(src)
         with self.get_cursor() as cursor:
             cursor.execute(self.template['update'], (dst, num))
             self.conn.commit()
+        return True, None
 
     def retrieve(self, src: str):
         v = Validator()
