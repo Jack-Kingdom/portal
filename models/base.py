@@ -26,10 +26,10 @@ class BaseModel(object):
         self.template = template
 
         if CONFIG['DATABASE_URI']:
-            pyodbc = __import__('pyodbc')
+            import pyodbc
             self.conn = pyodbc.connect(CONFIG['DATABASE_URI'])
         else:
-            sqlite3 = __import__('sqlite3')
+            import sqlite3
             self.conn = sqlite3.connect(os.path.join(os.curdir, 'database.sqlite'))
 
         with self.get_cursor() as cursor:
@@ -38,11 +38,17 @@ class BaseModel(object):
 
         if CONFIG['MEMCACHED_URI']:
             from pymemcache.client.base import Client
-            self.cache = Client(CONFIG['MEMCACHED_URI'].split(':'),
-                                timeout=CONFIG['MEMCACHED_TIMEOUT'])
+            host, port = CONFIG['MEMCACHED_URI'].split(':')
+            self.cache = Client((host, int(port)),
+                                timeout=CONFIG['MEMCACHED_TIMEOUT'],
+                                deserializer=lambda k, v, f: str(v, encoding='utf-8') if isinstance(v, bytes) else v
+                                )
             self.cache_expire = CONFIG['MEMCACHED_CACHE_EXPIRE']
 
     def __del__(self):
+        if hasattr(set, 'cache'):
+            self.cache.close()
+
         self.conn.close()
 
     def get_cursor(self):
