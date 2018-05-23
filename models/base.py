@@ -34,6 +34,13 @@ class BaseModel(object):
 
         with self.get_cursor() as cursor:
             cursor.execute(template['init'])
+            self.conn.commit()
+
+        if CONFIG['MEMCACHED_URI']:
+            from pymemcache.client.base import Client
+            self.cache = Client(CONFIG['MEMCACHED_URI'].split(':'),
+                                timeout=CONFIG['MEMCACHED_TIMEOUT'])
+            self.cache_expire = CONFIG['MEMCACHED_CACHE_EXPIRE']
 
     def __del__(self):
         self.conn.close()
