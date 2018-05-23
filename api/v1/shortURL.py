@@ -18,16 +18,19 @@ class ShortURLHandler(web.RequestHandler):
         data = escape.json_decode(self.request.body)
         if 'dst' not in data:
             raise web.HTTPError(400, 'dst url must be supplied.')
-
         dst = data['dst']
 
         v = Validator()
         if not v.is_url_legal(dst):
             raise web.HTTPError(400, 'dst url illegal.')
 
-        src = self.model.insert(data['dst'])
+        suc, src = self.model.insert(data['dst'])
 
-        self.write(escape.json_encode({'src': src, 'dst': dst}))
+        if suc:
+            self.write(escape.json_encode({'src': src, 'dst': dst}))
+        else:
+            err = src
+            raise web.HTTPError(400, err)
 
     def delete(self, src):
         v = Validator()
@@ -35,46 +38,33 @@ class ShortURLHandler(web.RequestHandler):
             self.set_status(400)
             raise web.HTTPError(400, 'src url can only contains unresolved char.')
 
-        self.model.delete(src)
+        suc, err = self.model.delete(src)
+        if not suc:
+            raise web.HTTPError(400, err)
 
     def put(self, src):
         data = escape.json_decode(self.request.body)
         if 'dst' not in data:
             raise web.HTTPError(400, 'dst url must be supplied.')
-
         dst = data['dst']
+
         v = Validator()
+        if not v.is_contains_unresolved_char_only(src):
+            raise web.HTTPError(400, 'src url can only contains unresolved char.')
         if not v.is_url_legal(dst):
             raise web.HTTPError(400, 'dst url illegal.')
 
-        self.model.update(src, dst)
+        suc, err = self.model.update(src, dst)
+        if not suc:
+            raise web.HTTPError(400, err)
 
     def get(self, src):
+        v = Validator()
+        if not v.is_contains_unresolved_char_only(src):
+            raise web.HTTPError(400, 'src url can only contains unresolved char.')
+
         dst = self.model.retrieve(src)
         if dst:
             self.redirect(dst, status=CONFIG['REDIRECT_STATUS_CODE'])
         else:
             raise web.HTTPError(404)
-
-
-class AliasHandler(web.RequestHandler):
-    def post(self, *args, **kwargs):
-        pass
-
-    def delete(self, *args, **kwargs):
-        pass
-
-    def put(self, *args, **kwargs):
-        pass
-
-    def get(self):
-        self.write("Hello, world")
-
-
-def make_app():
-    return web.Application([
-        (r"^/api/v1/shortURL$", ShortURLHandler),
-        (r"^/api/v1/shortURL/([0-9a-zA-Z\-_.~]+)$", ShortURLHandler),
-        (r"/api/v1/alias", AliasHandler),
-        (r"/api/v1/alias/([0-9a-zA-Z\-_.~]+)", AliasHandler),
-    ], debug=CONFIG['DEBUG'])
