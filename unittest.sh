@@ -1,6 +1,9 @@
 #! /bin/bash
 : << 'COMMENT'
 unittest start script
+notice:
+!!! unit test script will flush database.
+!!! do not run under your in used database.
 COMMENT
 
 set -e
