@@ -17,7 +17,7 @@ class AliasModel(BaseModel):
         if not v.is_url_legal(dst):
             raise ValueError('dst url not illegal')
 
-        if self.retrieve(src):
+        if self.retrieve(src, use_cache=False):
             return False, 'alias src has exists.'
 
         with self.get_cursor() as cursor:
@@ -34,7 +34,7 @@ class AliasModel(BaseModel):
         if not v.is_contains_unresolved_char_only(src):
             return ValueError('src url can only contains unresolved char')
 
-        if not self.retrieve(src):
+        if not self.retrieve(src, use_cache=False):
             return False, 'alias src not exist.'
 
         with self.get_cursor() as cursor:
@@ -53,7 +53,7 @@ class AliasModel(BaseModel):
         if not v.is_url_legal(dst):
             raise ValueError('dst url not illegal')
 
-        if not self.retrieve(src):
+        if not self.retrieve(src, use_cache=False):
             return False, 'alias src not exist.'
 
         with self.get_cursor() as cursor:
@@ -65,9 +65,9 @@ class AliasModel(BaseModel):
 
         return True, None
 
-    def retrieve(self, src: str):
+    def retrieve(self, src: str, use_cache=True):
 
-        if hasattr(self, 'cache'):
+        if hasattr(self, 'cache') and use_cache:
             dst = self.cache.get(src)
             if dst:
                 return dst

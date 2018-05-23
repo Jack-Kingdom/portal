@@ -42,7 +42,7 @@ class ShortURLModel(BaseModel):
 
         logger.info('delete shortURL for src: {uri}'.format(uri=src))
 
-        if not self.retrieve(src):
+        if not self.retrieve(src, use_cache=False):
             return False, 'shortURL src not exist.'
 
         num = mapper.uri2num(src)
@@ -65,7 +65,7 @@ class ShortURLModel(BaseModel):
         logger.info('update shortURL from src: {src_uri} to dst: {dst_uri}'.format(
             src_uri=src, dst_uri=dst))
 
-        if not self.retrieve(src):
+        if not self.retrieve(src, use_cache=False):
             return False, 'shortURL src not exist.'
 
         num = mapper.uri2num(src)
@@ -78,9 +78,9 @@ class ShortURLModel(BaseModel):
 
         return True, None
 
-    def retrieve(self, src: str):
+    def retrieve(self, src: str, use_cache=True):
 
-        if hasattr(self, 'cache'):
+        if hasattr(self, 'cache') and use_cache:
             dst = self.cache.get(src)
             if dst:
                 return dst
