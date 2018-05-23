@@ -12,3 +12,6 @@ venv
 
 # compiled tmp file
 __pycache__
+
+# cached pyc file
+*.pyc
