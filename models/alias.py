@@ -49,7 +49,7 @@ class AliasModel(BaseModel):
             return False, 'alias src not exist.'
 
         with self.get_cursor() as cursor:
-            cursor.execute(self.template['update'], (src, dst))
+            cursor.execute(self.template['update'], (dst, src))
             self.conn.commit()
         return True, None
 
