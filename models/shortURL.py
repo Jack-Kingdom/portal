@@ -27,7 +27,13 @@ class ShortURLModel(BaseModel):
                     if 'select'.upper() in line:
                         num, = cursor.fetchone()
             self.conn.commit()
-        return True, mapper.num2uri(int(num))
+
+        src = mapper.num2uri(int(num))
+
+        if hasattr(self, 'cache'):
+            self.cache.set(src, dst, expire=self.cache_expire)
+
+        return True, src
 
     def delete(self, src: str):
         v = Validator()
@@ -43,6 +49,10 @@ class ShortURLModel(BaseModel):
         with self.get_cursor() as cursor:
             cursor.execute(self.template['delete'], (num,))
             self.conn.commit()
+
+        if hasattr(self, 'cache'):
+            self.cache.delete(src)
+
         return True, None
 
     def update(self, src: str, dst: str):
@@ -62,9 +72,19 @@ class ShortURLModel(BaseModel):
         with self.get_cursor() as cursor:
             cursor.execute(self.template['update'], (dst, num))
             self.conn.commit()
+
+        if hasattr(self, 'cache'):
+            self.cache.set(src, dst, expire=self.cache_expire)
+
         return True, None
 
     def retrieve(self, src: str):
+
+        if hasattr(self, 'cache'):
+            dst = self.cache.get(src)
+            if dst:
+                return dst
+
         v = Validator()
         if not v.is_contains_unresolved_char_only(src):
             return ValueError('src url can only contains unresolved char')
@@ -76,5 +96,8 @@ class ShortURLModel(BaseModel):
             cursor.execute(self.template['query'], [num])
             dst = cursor.fetchone()
             dst = dst[0] if type(dst) is tuple else None
+
+        if hasattr(self, 'cache'):
+            self.cache.set(src, dst, expire=self.cache_expire)
 
         return dst

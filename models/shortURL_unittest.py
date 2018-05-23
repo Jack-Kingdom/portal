@@ -11,6 +11,13 @@ class ShortURLModelUnitTest(unittest.TestCase):
             cursor.execute('DELETE FROM shortURL;')
             self.m.conn.commit()
 
+        if hasattr(self.m, 'cache'):
+            self.m.cache.flush_all()
+
+    def tearDown(self):
+        if hasattr(self.m, 'cache'):
+            self.m.cache.close()
+
     def test_CURD(self):
         dst = 'https://google.com'
         changed_dst = 'https://youtube.com'
