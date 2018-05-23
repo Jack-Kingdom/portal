@@ -11,48 +11,25 @@ class AliasModelUnitTest(unittest.TestCase):
             cursor.execute('DELETE FROM alias;')
             self.m.conn.commit()
 
-    def test_insert(self):
+    def test_CURD(self):
         src = 'google'
         dst = 'https://google.com'
-        self.m.insert(src, dst)
+        changed_dst = 'https://youtube.com'
 
-        self.assertEqual(dst, self.m.retrieve(src))
-
-        self.m.delete(src)
+        self.assertTrue(self.m.insert(src, dst)[0])
+        self.assertEqual(self.m.retrieve(src), dst)
+        self.assertTrue(self.m.update(src, changed_dst)[0])
+        self.assertEqual(self.m.retrieve(src), changed_dst)
+        self.assertTrue(self.m.delete(src)[0])
+        self.assertIsNone(self.m.retrieve(src))
 
     def test_insert_illegal(self):
         with self.assertRaises(ValueError):
             self.m.insert('google', '123')
 
     def test_duplicated_insert(self):
-        pass
-
-    def test_delete(self):
         src = 'google'
         dst = 'https://google.com'
-        self.m.insert(src, dst)
 
-        self.assertIsNotNone(self.m.retrieve(src))
-        self.m.delete(src)
-        self.assertIsNone(self.m.retrieve(src))
-
-    def test_update(self):
-        src = 'google'
-        dst = 'https://google.com'
-        changed_dst = 'https://youtube.com'
-        self.m.insert(src, dst)
-
-        self.assertEqual(self.m.retrieve(src), dst)
-        self.m.update(src, changed_dst)
-        self.assertEqual(self.m.retrieve(src), changed_dst)
-
-        self.m.delete(src)
-
-    def test_retrieve(self):
-        src = 'google'
-        dst = 'https://google.com'
-        self.m.insert(src, dst)
-
-        self.assertEqual(self.m.retrieve(src), dst)
-        self.m.delete(src)
-        self.assertIsNone(self.m.retrieve(src))
+        self.assertTrue(self.m.insert(src, dst)[0])
+        self.assertFalse(self.m.insert(src, dst)[0])

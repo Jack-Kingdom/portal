@@ -11,38 +11,17 @@ class ShortURLModelUnitTest(unittest.TestCase):
             cursor.execute('DELETE FROM shortURL;')
             self.m.conn.commit()
 
-    def test_insert(self):
-        src = self.m.insert('https://google.com')
-        self.assertIsInstance(src, str)
+    def test_CURD(self):
+        dst = 'https://google.com'
+        changed_dst = 'https://youtube.com'
+        _, src = self.m.insert(dst)
 
-        self.m.delete(src)
+        self.assertIsNotNone(src)
+        self.assertTrue(self.m.update(src, changed_dst)[0])
+        self.assertEqual(self.m.retrieve(src), changed_dst)
+        self.assertTrue(self.m.delete(src))
+        self.assertIsNone(self.m.retrieve(src))
 
     def test_insert_illegal(self):
         with self.assertRaises(ValueError):
             self.m.insert('123')
-
-    def test_delete(self):
-        src = self.m.insert('https://google.com')
-
-        self.assertIsNotNone(self.m.retrieve(src))
-        self.m.delete(src)
-        self.assertIsNone(self.m.retrieve(src))
-
-    def test_update(self):
-        dst = 'https://google.com'
-        changed_dst = 'https://youtube.com'
-        src = self.m.insert(dst)
-
-        self.assertEqual(self.m.retrieve(src), dst)
-        self.m.update(src, changed_dst)
-        self.assertEqual(self.m.retrieve(src), changed_dst)
-
-        self.m.delete(src)
-
-    def test_retrieve(self):
-        dst = 'https://google.com'
-        src = self.m.insert(dst)
-
-        self.assertEqual(self.m.retrieve(src), dst)
-        self.m.delete(src)
-        self.assertIsNone(self.m.retrieve(src))
