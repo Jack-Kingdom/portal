@@ -1,10 +1,12 @@
+import sys
 import logging
 from tornado.ioloop import IOLoop
 from config import CONFIG
 from api.v1 import make_app
 
-logger = logging.getLogger(__name__)
-logger.addHandler(logging.StreamHandler())
+logger = logging.getLogger()
+logger.setLevel('DEBUG' if CONFIG['DEBUG'] else 'INFO')
+logger.addHandler(logging.StreamHandler(sys.stdout))
 
 if __name__ == "__main__":
     app = make_app()
