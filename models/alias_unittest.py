@@ -7,6 +7,10 @@ class AliasModelUnitTest(unittest.TestCase):
     def setUp(self):
         self.m = AliasModel()
 
+        with self.m.get_cursor() as cursor:
+            cursor.execute('DELETE FROM alias;')
+            self.m.conn.commit()
+
     def test_insert(self):
         src = 'google'
         dst = 'https://google.com'

@@ -7,6 +7,10 @@ class ShortURLModelUnitTest(unittest.TestCase):
     def setUp(self):
         self.m = ShortURLModel()
 
+        with self.m.get_cursor() as cursor:
+            cursor.execute('DELETE FROM shortURL;')
+            self.m.conn.commit()
+
     def test_insert(self):
         src = self.m.insert('https://google.com')
         self.assertIsInstance(src, str)

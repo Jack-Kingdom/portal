@@ -17,9 +17,13 @@ class AliasModel(BaseModel):
         if not v.is_url_legal(dst):
             raise ValueError('dst url not illegal')
 
+        if self.retrieve(src):
+            return False, 'alias has exists.'
+
         with self.get_cursor() as cursor:
             cursor.execute(self.template['insert'], (src, dst))
             self.conn.commit()
+        return True, None
 
     def delete(self, src: str):
         v = Validator()
