@@ -14,7 +14,7 @@ COPY . .
 ENV LISTENING_ADDRESS='0.0.0.0'
 
 # create user && switch
-RUN groupadd -r portal && useradd --no-log-init -r -g portal portal
+RUN adduser -D -u 1000 portal
 USER portal
 
 # entry
