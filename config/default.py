@@ -12,8 +12,7 @@ default_config = {
 
     "DATABASE_URI": "",
 
-    "ENABLE_MEMCACHED": False,
-    "MEMCACHED_URI": "localhost:11211",
+    "MEMCACHED_URI": "",
 
     "REDIRECT_STATUS_CODE": 302
 }
