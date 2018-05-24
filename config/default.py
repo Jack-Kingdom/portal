@@ -10,7 +10,7 @@ default_config = {
     "LISTENING_ADDRESS": "127.0.0.1",
     "LISTENING_PORT": "8888",
 
-    "DATABASE_URI": "",
+    "ODBC_URI": "",
 
     "MEMCACHED_ADDRESS": "",
     "MEMCACHED_PORT": 11211,
