@@ -12,7 +12,8 @@ default_config = {
 
     "DATABASE_URI": "",
 
-    "MEMCACHED_URI": "",
+    "MEMCACHED_ADDRESS": "",
+    "MEMCACHED_PORT": 11211,
     "MEMCACHED_TIMEOUT": 1,
     "MEMCACHED_CACHE_EXPIRE": 60 * 10,
 

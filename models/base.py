@@ -36,10 +36,10 @@ class BaseModel(object):
             cursor.execute(template['init'])
             self.conn.commit()
 
-        if CONFIG['MEMCACHED_URI']:
+        if CONFIG['MEMCACHED_ADDRESS'] and CONFIG['MEMCACHED_PORT']:
             from pymemcache.client.base import Client
-            host, port = CONFIG['MEMCACHED_URI'].split(':')
-            self.cache = Client((host, int(port)),
+            host, port = CONFIG['MEMCACHED_ADDRESS'], CONFIG['MEMCACHED_PORT']
+            self.cache = Client((host, port),
                                 timeout=CONFIG['MEMCACHED_TIMEOUT'],
                                 deserializer=lambda k, v, f: str(v, encoding='utf-8') if isinstance(v, bytes) else v
                                 )
