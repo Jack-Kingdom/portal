@@ -61,7 +61,10 @@ class ShortURLHandler(web.RequestHandler):
     def get(self, src):
         v = Validator()
         if not v.is_contains_unresolved_char_only(src):
-            raise web.HTTPError(400, 'src url can only contains unresolved char.')
+            if CONFIG['DEBUG']:
+                raise web.HTTPError(400, 'src url can only contains unresolved char.')
+            else:
+                raise web.HTTPError(404)
 
         dst = self.model.retrieve(src)
         if dst:
