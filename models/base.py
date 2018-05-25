@@ -25,9 +25,9 @@ class BaseModel(object):
     def __init__(self, template):
         self.template = template
 
-        if CONFIG['ODBC_URI']:
+        if CONFIG['ODBC_DSN']:
             import pyodbc
-            self.conn = pyodbc.connect(CONFIG['ODBC_URI'])
+            self.conn = pyodbc.connect(CONFIG['ODBC_DSN'])
         else:
             import sqlite3
             self.conn = sqlite3.connect(os.path.join(os.curdir, 'database.sqlite'))
