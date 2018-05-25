@@ -97,7 +97,7 @@ class ShortURLModel(BaseModel):
             dst = cursor.fetchone()
             dst = dst[0] if type(dst) is tuple else None
 
-        if hasattr(self, 'cache'):
+        if hasattr(self, 'cache') and use_cache:
             self.cache.set(src, dst, expire=self.cache_expire)
 
         return dst
