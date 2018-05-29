@@ -7,14 +7,14 @@ MAINTAINER Jack King
 
 WORKDIR /usr/src/app
 
+# install odbc dependency
+RUN apt-get update && apt-get install -y unixodbc unixodbc-dev python-pyodbc && \
+    rm -rf /var/lib/apt/lists/*
+
 # install requirements
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir pymemcache
-
-# install pyodbc
-RUN apt-get update && apt-get install -y unixodbc python-pyodbc && \
-    rm -rf /var/lib/apt/lists/*
+RUN pip install --no-cache-dir pymemcache pyodbc
 
 # install mysql odbc driver
 ARG MYSQL_DRIVER_FILENAME='mysql-connector-odbc-8.0.11-linux-glibc2.12-x86-64bit.tar.gz'
