@@ -1,3 +1,6 @@
+# minimal runtime
+# without odbc and memcache support
+
 FROM python:3-alpine
 MAINTAINER Jack King
 
