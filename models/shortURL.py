@@ -93,7 +93,7 @@ class ShortURLModel(BaseModel):
 
         num = mapper.uri2num(src)
         with self.get_cursor() as cursor:
-            cursor.execute(self.template['query'], [num])
+            cursor.execute(self.template['query'], (num,))
             dst = cursor.fetchone()
             dst = dst[0] if type(dst) is tuple else None
 
