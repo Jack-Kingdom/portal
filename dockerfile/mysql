@@ -33,6 +33,5 @@ COPY . .
 # set env
 ENV LISTENING_ADDRESS='0.0.0.0'
 
-
 # entry
 CMD python start.py
