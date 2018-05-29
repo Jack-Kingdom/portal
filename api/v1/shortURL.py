@@ -32,7 +32,10 @@ class ShortURLHandler(web.RequestHandler):
             err = src
             raise web.HTTPError(400, err)
 
-    def delete(self, src):
+    def delete(self, src=None):
+        if not src:
+            raise web.HTTPError(404)
+
         v = Validator()
         if not v.is_contains_unresolved_char_only(src):
             self.set_status(400)
@@ -42,7 +45,10 @@ class ShortURLHandler(web.RequestHandler):
         if not suc:
             raise web.HTTPError(400, err)
 
-    def put(self, src):
+    def put(self, src=None):
+        if not src:
+            raise web.HTTPError(404)
+
         data = escape.json_decode(self.request.body)
         if 'dst' not in data:
             raise web.HTTPError(400, 'dst url must be supplied.')
@@ -58,7 +64,10 @@ class ShortURLHandler(web.RequestHandler):
         if not suc:
             raise web.HTTPError(400, err)
 
-    def get(self, src):
+    def get(self, src=None):
+        if not src:
+            raise web.HTTPError(404)
+
         v = Validator()
         if not v.is_contains_unresolved_char_only(src):
             if CONFIG['DEBUG']:
