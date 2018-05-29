@@ -13,9 +13,5 @@ COPY . .
 # set env
 ENV LISTENING_ADDRESS='0.0.0.0'
 
-# create user && switch
-RUN adduser -D -u 1000 portal
-USER portal
-
 # entry
 CMD python start.py
