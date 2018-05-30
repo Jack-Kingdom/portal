@@ -1,11 +1,19 @@
-sudo: false
-language: python
+sudo: required
 
+services:
+  - docker
+
+language: python
 python:
   - "3.6"
+
+before_install:
+  - docker run -p 3306:3306 --env MYSQL_ROOT_PASSWORD=root --env MYSQL_DATABASE=portal --name local-mysql mysql:5
+  - docker run -p 11211:11211 --name local-memcached memcached:alpine
+  - export MEMCACHED_ADDRESS=localhost
 
 install:
   - pip install -r requirements.txt
 
 script:
-  - ./unittest.sh
+  - for i in {1..10}; do ./unittest.sh; done
