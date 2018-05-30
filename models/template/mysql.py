@@ -32,9 +32,7 @@ CREATE TABLE IF NOT EXISTS alias (
   dst VARCHAR(255) NOT NULL
 );
     """,
-    'insert': """
-INSERT INTO alias VALUES (? ,?);
-        """,
+    'insert': """INSERT INTO alias VALUES (? ,?);""",
     'update': """
 UPDATE alias SET dst=? WHERE src=?;
         """,
