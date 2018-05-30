@@ -103,7 +103,7 @@ class ShortURLModel(BaseModel):
             cursor.execute(self.template['query'], (num,))
             dst = cursor.fetchone()
             logger.debug('queried dst: {value}, type: {type}'.format(value=dst, type=type(dst)))
-            dst = dst[0] if len(dst) else None
+            dst = dst[0] if dst else None
 
         if hasattr(self, 'cache') and use_cache:
             self.cache.set(src, dst, expire=self.cache_expire)
