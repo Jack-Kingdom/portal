@@ -1,6 +1,6 @@
 sut:
   build: .
-  command: ./unittest.sh
+  command: sleep 15 && ./unittest.sh
   links:
     - "mysql"
     - "memcached"
