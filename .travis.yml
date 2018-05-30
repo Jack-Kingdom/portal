@@ -11,8 +11,7 @@ before_install:
   - docker run -p 3307:3306 --env MYSQL_ROOT_PASSWORD=root --env MYSQL_DATABASE=portal --name local-mysql -d mysql:5
   - docker run -p 11212:11211 --name local-memcached -d memcached:alpine
   - export MEMCACHED_ADDRESS=localhost
-  - export DB_HOST=`docker inspect --format '{{ .NetworkSettings.IPAddress }}' local_mysql`
-  - export MEMCACHED_ADDRESS=`docker inspect --format '{{ .NetworkSettings.IPAddress }}' local-memcached`
+  - export DB_PORT=3307
 
 install:
   - pip install -r requirements.txt
