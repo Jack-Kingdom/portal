@@ -1,6 +1,6 @@
 sut:
   build: .
-  command: unittest.sh
+  command: ./unittest.sh
   links:
     - "mysql"
     - "memcached"
