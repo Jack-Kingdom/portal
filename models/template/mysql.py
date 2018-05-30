@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS shortURL (
   dst VARCHAR(255) NOT NULL
 );
     """,
-    'insert': """START TRANSACTION;
+    'insert': """
+START TRANSACTION;
 INSERT INTO shortURL VALUES (NULL ,?);
 COMMIT;
 SELECT id FROM shortURL ORDER BY id DESC LIMIT 1;""",

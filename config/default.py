@@ -10,7 +10,10 @@ default_config = {
     "LISTENING_ADDRESS": "127.0.0.1",
     "LISTENING_PORT": "8888",
 
-    "ODBC_DSN": "",
+    "DB_HOST": "localhost",
+    "DB_USER": "root",
+    "DB_PASSWORD": "root",
+    "DATABASE": "portal",
 
     "MEMCACHED_ADDRESS": "",
     "MEMCACHED_PORT": 11211,

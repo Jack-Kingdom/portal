@@ -8,7 +8,15 @@ logger = logging.getLogger(__name__)
 
 class AliasModel(BaseModel):
     def __init__(self):
-        super(AliasModel, self).__init__(alias_template)
+        super(AliasModel, self).__init__()
+
+        with self.conn.cursor() as cursor:
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS alias (
+              src VARCHAR(255) PRIMARY KEY,
+              dst VARCHAR(255) NOT NULL
+            );""")
+            self.conn.commit()
 
     def insert(self, src: str, dst: str):
         v = Validator()
@@ -20,8 +28,8 @@ class AliasModel(BaseModel):
         if self.retrieve(src, use_cache=False):
             return False, 'alias src has exists.'
 
-        with self.get_cursor() as cursor:
-            cursor.execute(self.template['insert'], (src, dst))
+        with self.conn.cursor() as cursor:
+            cursor.execute("INSERT INTO alias VALUES (%s ,%s);", (src, dst))
             self.conn.commit()
 
         if hasattr(self, 'cache'):
@@ -37,8 +45,8 @@ class AliasModel(BaseModel):
         if not self.retrieve(src, use_cache=False):
             return False, 'alias src not exist.'
 
-        with self.get_cursor() as cursor:
-            cursor.execute(self.template['delete'], (src,))
+        with self.conn.cursor() as cursor:
+            cursor.execute('DELETE FROM alias WHERE src=%s;', (src,))
             self.conn.commit()
 
         if hasattr(self, 'cache'):
@@ -56,8 +64,8 @@ class AliasModel(BaseModel):
         if not self.retrieve(src, use_cache=False):
             return False, 'alias src not exist.'
 
-        with self.get_cursor() as cursor:
-            cursor.execute(self.template['update'], (dst, src))
+        with self.conn.cursor() as cursor:
+            cursor.execute("UPDATE alias SET dst=%s WHERE src=%s;", (dst, src))
             self.conn.commit()
 
         if hasattr(self, 'cache'):
@@ -76,10 +84,10 @@ class AliasModel(BaseModel):
         if not v.is_contains_unresolved_char_only(src):
             return ValueError('src url can only contains unresolved char')
 
-        with self.get_cursor() as cursor:
-            cursor.execute(self.template['query'], (src,))
-            dst = cursor.fetchone()
-            dst = dst[0] if type(dst) is tuple else None
+        with self.conn.cursor() as cursor:
+            cursor.execute('SELECT dst FROM alias WHERE src=%s;', (src,))
+            result = cursor.fetchone()
+            dst, = result if result else (None,)
 
         if hasattr(self, 'cache') and use_cache:
             self.cache.set(src, dst, expire=self.cache_expire)
