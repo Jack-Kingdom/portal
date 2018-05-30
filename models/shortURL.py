@@ -97,9 +97,13 @@ class ShortURLModel(BaseModel):
         logger.debug('src: {src} map to num: {num}'.format(src=src, num=num))
 
         with self.get_cursor() as cursor:
+            logger.debug('execute sql: {sql}, value: {value}'.format(
+                sql=self.template['query'],
+                value=(num,)))
             cursor.execute(self.template['query'], (num,))
             dst = cursor.fetchone()
-            dst = dst[0] if type(dst) is tuple else None
+            logger.debug('queried dst: {value}, type: {type}'.format(value=dst, type=type(dst)))
+            dst = dst[0] if len(dst) else None
 
         if hasattr(self, 'cache') and use_cache:
             self.cache.set(src, dst, expire=self.cache_expire)
