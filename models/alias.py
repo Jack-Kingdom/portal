@@ -33,6 +33,7 @@ class AliasModel(BaseModel):
             self.conn.commit()
 
         if hasattr(self, 'cache'):
+            logger.info('cached set: src:{},dst:{}'.format(src, dst))
             self.cache.set(src, dst, expire=self.cache_expire)
 
         return True, None
@@ -50,6 +51,7 @@ class AliasModel(BaseModel):
             self.conn.commit()
 
         if hasattr(self, 'cache'):
+            logger.info('cached delete: src:{}'.format(src))
             self.cache.delete(src)
 
         return True, None
@@ -69,6 +71,7 @@ class AliasModel(BaseModel):
             self.conn.commit()
 
         if hasattr(self, 'cache'):
+            logger.info('cached set: src:{},dst:{}'.format(src, dst))
             self.cache.set(src, dst, expire=self.cache_expire)
 
         return True, None
@@ -78,7 +81,10 @@ class AliasModel(BaseModel):
         if hasattr(self, 'cache') and use_cache:
             dst = self.cache.get(src)
             if dst:
+                logger.info('cached hit: src:{},dst:{}'.format(src, dst))
                 return dst
+            else:
+                logger.info('cached missed: src:{}'.format(src))
 
         v = Validator()
         if not v.is_contains_unresolved_char_only(src):
@@ -89,7 +95,8 @@ class AliasModel(BaseModel):
             result = cursor.fetchone()
             dst, = result if result else (None,)
 
-        if hasattr(self, 'cache') and use_cache:
+        if hasattr(self, 'cache') and use_cache and dst:
+            logger.info('cached set: src:{},dst:{}'.format(src, dst))
             self.cache.set(src, dst, expire=self.cache_expire)
 
         return dst
