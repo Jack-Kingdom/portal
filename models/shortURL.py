@@ -21,10 +21,10 @@ class ShortURLModel(BaseModel):
         with self.get_cursor() as cursor:
             for line in self.template['insert'].split('\n'):
                 if '?' in line:
-                    logger.debug('execute sql: ', line, (dst,))
+                    logger.debug('execute sql: {sql}, value: {value}'.format(sql=line, value=(dst,)))
                     cursor.execute(line, (dst,))
                 else:
-                    logger.debug('execute sql: ', line)
+                    logger.debug('execute sql: {sql}'.format(sql=line))
                     cursor.execute(line)
                     if 'select'.upper() in line:
                         num, = cursor.fetchone()
