@@ -7,7 +7,7 @@ class ShortURLModelUnitTest(unittest.TestCase):
     def setUp(self):
         self.m = ShortURLModel()
 
-        with self.m.get_cursor() as cursor:
+        with self.m.conn.cursor() as cursor:
             cursor.execute('DELETE FROM shortURL;')
             self.m.conn.commit()
 
