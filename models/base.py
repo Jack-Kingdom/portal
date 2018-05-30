@@ -26,7 +26,8 @@ class BaseModel(object):
             self.cache_expire = CONFIG['MEMCACHED_CACHE_EXPIRE']
 
     def __del__(self):
-        if hasattr(set, 'cache'):
+        if hasattr(self, 'cache'):
             self.cache.close()
 
-        self.conn.close()
+        if hasattr(self, 'conn'):
+            self.conn.close()
