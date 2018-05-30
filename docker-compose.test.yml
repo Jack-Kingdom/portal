@@ -1,6 +1,6 @@
 sut:
   build: .
-  command: sleep 15 && ./unittest.sh
+  command: sleep 15 && apk add --no-cache bash && ./unittest.sh
   links:
     - "mysql"
     - "memcached"
