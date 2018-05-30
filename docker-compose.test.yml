@@ -7,7 +7,7 @@ sut:
 
   environment:
     - DB_HOST=database
-    - MEMCACHED=ADDRESS:memcached
+    - MEMCACHED_ADDRESS=memcached
 
 mysql:
   image: mysql:5
