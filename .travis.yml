@@ -8,8 +8,8 @@ python:
   - "3.6"
 
 before_install:
-  - docker run -p 3306:3306 --env MYSQL_ROOT_PASSWORD=root --env MYSQL_DATABASE=portal --name local-mysql mysql:5
-  - docker run -p 11211:11211 --name local-memcached memcached:alpine
+  - docker run -p 3306:3306 --env MYSQL_ROOT_PASSWORD=root --env MYSQL_DATABASE=portal --name local-mysql -d mysql:5
+  - docker run -p 11211:11211 --name local-memcached -d memcached:alpine
   - export MEMCACHED_ADDRESS=localhost
 
 install:
