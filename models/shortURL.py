@@ -19,6 +19,9 @@ class ShortURLModel(BaseModel):
         logger.info('create shortURL for dst: {uri}'.format(uri=dst))
 
         with self.get_cursor() as cursor:
+            # TODO: redesign this part
+            # it's so bad here, do not hack in models
+
             for line in self.template['insert'].split('\n'):
                 if '?' in line:
                     logger.debug('execute sql: {sql}, value: {value}'.format(sql=line, value=(dst,)))
