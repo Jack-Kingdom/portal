@@ -5,15 +5,15 @@ sut:
     - "mysql"
     - "memcached"
 
-  env:
-    - "DB_HOST:database"
-    - "MEMCACHED_ADDRESS:memcached"
+  environment:
+    - DB_HOST=database
+    - MEMCACHED=ADDRESS:memcached
 
 mysql:
   image: mysql:5
-  env:
-    - "MYSQL_ROOT_PASSWORD:root"
-    - "MYSQL_DATABASE:portal"
+  environment:
+    - MYSQL_ROOT_PASSWORD=root
+    - MYSQL_DATABASE=portal
   ports:
     - "3306:3306"
 
