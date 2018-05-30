@@ -8,8 +8,17 @@ logger = logging.getLogger(__name__)
 
 
 class ShortURLModel(BaseModel):
+
     def __init__(self):
-        super(ShortURLModel, self).__init__(shortURL_template)
+        super(ShortURLModel, self).__init__()
+
+        with self.conn.cursor() as cursor:
+            cursor.execute("""
+         CREATE TABLE IF NOT EXISTS shortURL ( 
+          id  INTEGER PRIMARY KEY AUTO_INCREMENT, 
+          dst VARCHAR(255) NOT NULL 
+        );""")
+            self.conn.commit()
 
     def insert(self, dst: str):
         v = Validator()
@@ -18,20 +27,14 @@ class ShortURLModel(BaseModel):
 
         logger.info('create shortURL for dst: {uri}'.format(uri=dst))
 
-        with self.get_cursor() as cursor:
-            # TODO: redesign this part
-            # it's so bad here, do not hack in models
-
-            for line in self.template['insert'].split('\n'):
-                if '?' in line:
-                    logger.debug('execute sql: {sql}, value: {value}'.format(sql=line, value=(dst,)))
-                    cursor.execute(line, (dst,))
-                else:
-                    logger.debug('execute sql: {sql}'.format(sql=line))
-                    cursor.execute(line)
-                    if 'select'.upper() in line:
-                        num, = cursor.fetchone()
+        with self.conn.cursor() as cursor:
+            cursor.execute("START TRANSACTION;")
+            cursor.execute("INSERT INTO shortURL VALUES (NULL ,%s);", (dst,))
+            cursor.execute("COMMIT;")
             self.conn.commit()
+            cursor.execute("SELECT id FROM shortURL ORDER BY id DESC LIMIT 1;")
+            result = cursor.fetchone()
+            num, = result if result else (None,)
 
         src = mapper.num2uri(int(num))
 
@@ -51,8 +54,8 @@ class ShortURLModel(BaseModel):
             return False, 'shortURL src not exist.'
 
         num = mapper.uri2num(src)
-        with self.get_cursor() as cursor:
-            cursor.execute(self.template['delete'], (num,))
+        with self.conn.cursor() as cursor:
+            cursor.execute('DELETE FROM shortURL WHERE id=%s', (num,))
             self.conn.commit()
 
         if hasattr(self, 'cache'):
@@ -74,8 +77,8 @@ class ShortURLModel(BaseModel):
             return False, 'shortURL src not exist.'
 
         num = mapper.uri2num(src)
-        with self.get_cursor() as cursor:
-            cursor.execute(self.template['update'], (dst, num))
+        with self.conn.cursor() as cursor:
+            cursor.execute('UPDATE shortURL SET dst=%s WHERE id=%s;', (dst, num))
             self.conn.commit()
 
         if hasattr(self, 'cache'):
@@ -99,14 +102,10 @@ class ShortURLModel(BaseModel):
         num = mapper.uri2num(src)
         logger.debug('src: {src} map to num: {num}'.format(src=src, num=num))
 
-        with self.get_cursor() as cursor:
-            logger.debug('execute sql: {sql}, value: {value}'.format(
-                sql=self.template['query'],
-                value=(num,)))
-            cursor.execute(self.template['query'], (num,))
-            dst = cursor.fetchone()
-            logger.debug('queried dst: {value}, type: {type}'.format(value=dst, type=type(dst)))
-            dst = dst[0] if dst else None
+        with self.conn.cursor() as cursor:
+            cursor.execute('SELECT dst FROM shortURL WHERE id=%s', (num,))
+            result = cursor.fetchone()
+            dst, = result if result else (None,)
 
         if hasattr(self, 'cache') and use_cache:
             self.cache.set(src, dst, expire=self.cache_expire)
