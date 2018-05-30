@@ -12,6 +12,7 @@ class BaseModel(object):
     def __init__(self):
 
         self.conn = pymysql.connect(host=CONFIG['DB_HOST'],
+                                    port=CONFIG['DB_PORT'],
                                     user=CONFIG['DB_USER'],
                                     password=CONFIG['DB_PASSWORD'],
                                     db=CONFIG['DATABASE'],
