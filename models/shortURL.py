@@ -94,6 +94,8 @@ class ShortURLModel(BaseModel):
         logger.info('retrieve shortURL from src: {uri}'.format(uri=src))
 
         num = mapper.uri2num(src)
+        logger.debug('src: {src} map to num: {num}'.format(src=src, num=num))
+
         with self.get_cursor() as cursor:
             cursor.execute(self.template['query'], (num,))
             dst = cursor.fetchone()
