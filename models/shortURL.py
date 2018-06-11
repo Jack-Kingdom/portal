@@ -30,11 +30,11 @@ class ShortURLModel(BaseModel):
         with self.conn.cursor() as cursor:
             cursor.execute("START TRANSACTION;")
             cursor.execute("INSERT INTO shortURL VALUES (NULL ,%s);", (dst,))
-            cursor.execute("COMMIT;")
-            self.conn.commit()
             cursor.execute("SELECT id FROM shortURL ORDER BY id DESC LIMIT 1;")
             result = cursor.fetchone()
             num, = result if result else (None,)
+            cursor.execute("COMMIT;")
+            self.conn.commit()
 
         src = mapper.num2uri(int(num))
 
