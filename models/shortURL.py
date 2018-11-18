@@ -16,27 +16,28 @@ class ShortURLModel(BaseModel):
             cursor.execute("""
          CREATE TABLE IF NOT EXISTS shortURL ( 
           id  INTEGER PRIMARY KEY AUTO_INCREMENT, 
-          dst VARCHAR(255) NOT NULL 
+          dst VARCHAR(255) NOT NULL,
+          status_code ENUM('301', '302') DEFAULT '301',
+          permanent BOOL NOT NULL DEFAULT FALSE ,
+          duration INTEGER NOT NULL DEFAULT 3600*24*30,
+          created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          modified_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         );""")
             self.conn.commit()
 
     def insert(self, dst: str):
         v = Validator()
         if not v.is_url_legal(dst):
-            raise ValueError('dst url not illegal')
+            raise ValueError('dst url illegal')
 
         logger.info('create shortURL for dst: {uri}'.format(uri=dst))
 
         with self.conn.cursor() as cursor:
-            cursor.execute("START TRANSACTION;")
-            cursor.execute("INSERT INTO shortURL VALUES (NULL ,%s);", (dst,))
-            cursor.execute("SELECT id FROM shortURL ORDER BY id DESC LIMIT 1;")
-            result = cursor.fetchone()
-            num, = result if result else (None,)
-            cursor.execute("COMMIT;")
+            cursor.execute("INSERT INTO shortURL VALUES (NULL ,%s); SELECT LAST_INSERT_ID();", (dst,))
+            num, = cursor.fetchone()
             self.conn.commit()
 
-        src = mapper.num2uri(int(num))
+        src = mapper.num2uri(num)
 
         if hasattr(self, 'cache'):
             logger.info('cached set: src:{},dst:{}'.format(src, dst))

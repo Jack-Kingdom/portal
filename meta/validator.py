@@ -1,6 +1,6 @@
 """
-this file supplied some function that \
-used to check url is illegal or not.
+this file implemented a Validator class \
+used to check url is legal or not.
 """
 
 import re

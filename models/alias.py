@@ -14,7 +14,12 @@ class AliasModel(BaseModel):
             cursor.execute("""
             CREATE TABLE IF NOT EXISTS alias (
               src VARCHAR(255) PRIMARY KEY,
-              dst VARCHAR(255) NOT NULL
+              dst VARCHAR(255) NOT NULL,
+              status_code ENUM('301', '302') DEFAULT '301',
+              permanent BOOL NOT NULL DEFAULT FALSE ,
+              duration INTEGER NOT NULL DEFAULT 3600*24*30,
+              created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+              modified_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             );""")
             self.conn.commit()
 
@@ -25,7 +30,7 @@ class AliasModel(BaseModel):
         if not v.is_url_legal(dst):
             raise ValueError('dst url not illegal')
 
-        if self.retrieve(src, use_cache=False):
+        if self.retrieve(src, with_cache=False):
             return False, 'alias src has exists.'
 
         with self.conn.cursor() as cursor:
@@ -43,7 +48,7 @@ class AliasModel(BaseModel):
         if not v.is_contains_unresolved_char_only(src):
             return ValueError('src url can only contains unresolved char')
 
-        if not self.retrieve(src, use_cache=False):
+        if not self.retrieve(src, with_cache=False):
             return False, 'alias src not exist.'
 
         with self.conn.cursor() as cursor:
@@ -63,7 +68,7 @@ class AliasModel(BaseModel):
         if not v.is_url_legal(dst):
             raise ValueError('dst url not illegal')
 
-        if not self.retrieve(src, use_cache=False):
+        if not self.retrieve(src, with_cache=False):
             return False, 'alias src not exist.'
 
         with self.conn.cursor() as cursor:
@@ -76,9 +81,9 @@ class AliasModel(BaseModel):
 
         return True, None
 
-    def retrieve(self, src: str, use_cache=True):
+    def retrieve(self, src: str, with_cache=True):
 
-        if hasattr(self, 'cache') and use_cache:
+        if hasattr(self, 'cache') and with_cache:
             dst = self.cache.get(src)
             if dst:
                 logger.info('cached hit: src:{},dst:{}'.format(src, dst))
@@ -95,7 +100,7 @@ class AliasModel(BaseModel):
             result = cursor.fetchone()
             dst, = result if result else (None,)
 
-        if hasattr(self, 'cache') and use_cache and dst:
+        if hasattr(self, 'cache') and with_cache and dst:
             logger.info('cached set: src:{},dst:{}'.format(src, dst))
             self.cache.set(src, dst, expire=self.cache_expire)
 

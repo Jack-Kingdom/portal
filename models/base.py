@@ -26,6 +26,11 @@ class BaseModel(object):
             self.cache_expire = CONFIG['MEMCACHED_CACHE_EXPIRE']
 
     def __del__(self):
+        """
+        close connection
+        :return: None
+        """
+
         if hasattr(self, 'cache'):
             self.cache.close()
 

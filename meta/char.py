@@ -1,6 +1,6 @@
 """
-declare url allow character
-check follow link for more details:
+url allowed character statement in this file.
+check follow link for details:
 https://en.wikipedia.org/wiki/Percent-encoding
 """
 

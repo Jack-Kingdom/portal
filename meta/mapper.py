@@ -3,6 +3,7 @@ some mapper function declared in this file:
 - num2uri: convert number to uri
 - uri2num: convert a uri to number
 """
+
 from meta.char import url_unreserved_characters, \
     url_unreserved_characters_length
 
