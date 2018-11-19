@@ -2,7 +2,6 @@ import logging
 from meta import mapper
 from meta.validator import Validator
 from models.base import BaseModel
-from models.template import shortURL_template
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +18,7 @@ class ShortURLModel(BaseModel):
           dst VARCHAR(255) NOT NULL,
           status_code ENUM('301', '302') DEFAULT '301',
           permanent BOOL NOT NULL DEFAULT FALSE ,
-          duration INTEGER NOT NULL DEFAULT 3600*24*30,
+          duration INTEGER NOT NULL DEFAULT 2592000,
           created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
           modified_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         );""")

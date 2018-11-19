@@ -1,7 +1,7 @@
 import logging
+from utils import error
 from meta.validator import Validator
 from models.base import BaseModel
-from models.template import alias_template
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ class AliasModel(BaseModel):
               dst VARCHAR(255) NOT NULL,
               status_code ENUM('301', '302') DEFAULT '301',
               permanent BOOL NOT NULL DEFAULT FALSE ,
-              duration INTEGER NOT NULL DEFAULT 3600*24*30,
+              duration INTEGER NOT NULL DEFAULT 2592000 ,
               created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
               modified_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             );""")
@@ -26,9 +26,9 @@ class AliasModel(BaseModel):
     def insert(self, src: str, dst: str):
         v = Validator()
         if not v.is_contains_unresolved_char_only(src):
-            raise ValueError('src url can only contains unresolved char')
+            raise error.SourceIllegal('src url can only contains unresolved char')
         if not v.is_url_legal(dst):
-            raise ValueError('dst url not illegal')
+            raise error.DestinationIllegal('dst url not illegal')
 
         if self.retrieve(src, with_cache=False):
             return False, 'alias src has exists.'
@@ -46,7 +46,7 @@ class AliasModel(BaseModel):
     def delete(self, src: str):
         v = Validator()
         if not v.is_contains_unresolved_char_only(src):
-            return ValueError('src url can only contains unresolved char')
+            return error.SourceIllegal('src url can only contains unresolved char')
 
         if not self.retrieve(src, with_cache=False):
             return False, 'alias src not exist.'
@@ -64,9 +64,9 @@ class AliasModel(BaseModel):
     def update(self, src: str, dst: str):
         v = Validator()
         if not v.is_contains_unresolved_char_only(src):
-            return ValueError('src url can only contains unresolved char')
+            return error.SourceIllegal('src url can only contains unresolved char')
         if not v.is_url_legal(dst):
-            raise ValueError('dst url not illegal')
+            raise error.DestinationIllegal('dst url not illegal')
 
         if not self.retrieve(src, with_cache=False):
             return False, 'alias src not exist.'
@@ -93,7 +93,7 @@ class AliasModel(BaseModel):
 
         v = Validator()
         if not v.is_contains_unresolved_char_only(src):
-            return ValueError('src url can only contains unresolved char')
+            return error.SourceIllegal('src url can only contains unresolved char')
 
         with self.conn.cursor() as cursor:
             cursor.execute('SELECT dst FROM alias WHERE src=%s;', (src,))
