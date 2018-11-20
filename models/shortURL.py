@@ -20,7 +20,8 @@ class ShortURLModel(BaseModel):
           permanent BOOL NOT NULL DEFAULT FALSE ,
           duration INTEGER NOT NULL DEFAULT 2592000,
           created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-          modified_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+          modified_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          KEY adx_id (id)
         );""")
             self.conn.commit()
 
@@ -32,7 +33,9 @@ class ShortURLModel(BaseModel):
         logger.info('create shortURL for dst: {uri}'.format(uri=dst))
 
         with self.conn.cursor() as cursor:
-            cursor.execute("INSERT INTO shortURL VALUES (NULL ,%s); SELECT LAST_INSERT_ID();", (dst,))
+            cursor.execute(
+                "INSERT INTO shortURL VALUES (NULL, %s, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT); "
+                "SELECT LAST_INSERT_ID();", (dst,))
             num, = cursor.fetchone()
             self.conn.commit()
 

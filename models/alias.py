@@ -19,7 +19,8 @@ class AliasModel(BaseModel):
               permanent BOOL NOT NULL DEFAULT FALSE ,
               duration INTEGER NOT NULL DEFAULT 2592000 ,
               created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-              modified_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+              modified_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+              KEY idx_src (src)
             );""")
             self.conn.commit()
 
