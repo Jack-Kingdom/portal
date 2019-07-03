@@ -34,8 +34,7 @@ class ShortURLModel(BaseModel):
 
         with self.conn.cursor() as cursor:
             cursor.execute(
-                "INSERT INTO shortURL VALUES (DEFAULT, %s, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT); "
-                "SELECT LAST_INSERT_ID();", (dst,))
+                "INSERT INTO shortURL VALUES (DEFAULT, %s, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT); SELECT LAST_INSERT_ID();", (dst,))
             num, = cursor.fetchone()
             self.conn.commit()
 

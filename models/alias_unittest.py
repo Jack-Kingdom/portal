@@ -1,5 +1,6 @@
 import unittest
 from models.alias import AliasModel
+from utils.error import DestinationIllegal
 
 
 class AliasModelUnitTest(unittest.TestCase):
@@ -31,7 +32,7 @@ class AliasModelUnitTest(unittest.TestCase):
         self.assertIsNone(self.m.retrieve(src))
 
     def test_insert_illegal(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(DestinationIllegal):
             self.m.insert('google', '123')
 
     def test_duplicated_insert(self):
