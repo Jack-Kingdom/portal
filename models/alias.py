@@ -35,7 +35,7 @@ class AliasModel(BaseModel):
             return False, 'alias src has exists.'
 
         with self.conn.cursor() as cursor:
-            cursor.execute("INSERT INTO alias VALUES (%s ,%s);", (src, dst))
+            cursor.execute("INSERT INTO alias VALUES (%s, %s, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT);", (src, dst))
             self.conn.commit()
 
         if hasattr(self, 'cache'):
