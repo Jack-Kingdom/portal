@@ -34,8 +34,8 @@ class ShortURLModel(BaseModel):
 
         with self.conn.cursor() as cursor:
             cursor.execute(
-                "INSERT INTO shortURL VALUES (DEFAULT, %s, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT); SELECT LAST_INSERT_ID();", (dst,))
-            num, = cursor.fetchone()
+                "INSERT INTO shortURL VALUES (DEFAULT, %s, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT);", (dst,))
+            num = cursor.lastrowid
             self.conn.commit()
 
         src = mapper.num2uri(num)
