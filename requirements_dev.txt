@@ -1,4 +1,4 @@
-coverage==4.5.1
-pymemcache==1.4.4
-PyMySQL==0.8.1
-tornado==5.0.2
+coverage==4.5.4
+pymemcache==2.2.2
+PyMySQL==0.9.3
+tornado==6.0.3
