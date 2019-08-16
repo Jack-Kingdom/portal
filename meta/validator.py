@@ -4,18 +4,19 @@ used to check url is legal or not.
 """
 
 import re
-from utils import decr
+from utils.decr.singleton import SingletonDecorator
+
+unresolved_char_re = re.compile(r'[0-9a-zA-Z\-_.~]+')
+url_legal_re = re.compile(r"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$")
 
 
-@decr.SingletonDecorator
+@SingletonDecorator
 class Validator(object):
-    def __init__(self):
-        self.unresolved_char_re = re.compile(r'[0-9a-zA-Z\-_.~]+')
-        self.url_legal_re = re.compile(
-            r"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$")
 
-    def is_contains_unresolved_char_only(self, url):
-        return bool(self.unresolved_char_re.fullmatch(url))
+    @staticmethod
+    def is_contains_unresolved_char_only(url):
+        return bool(unresolved_char_re.fullmatch(url))
 
-    def is_url_legal(self, url):
-        return bool(self.url_legal_re.fullmatch(url))
+    @staticmethod
+    def is_url_legal(url):
+        return bool(url_legal_re.fullmatch(url))

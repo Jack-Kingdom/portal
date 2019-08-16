@@ -1,11 +1,9 @@
 """
-default config in this file
-ODBC URI Scheme:
-- https://tools.ietf.org/html/draft-patrick-lambert-odbc-uri-scheme-00
+default config defined in this file
 """
 
 default_config = {
-    "DEBUG": False,
+    "DEBUG": int(False),
 
     "LISTENING_ADDRESS": "127.0.0.1",
     "LISTENING_PORT": "8888",
@@ -16,7 +14,8 @@ default_config = {
     "DB_PASSWORD": "root",
     "DATABASE": "portal",
 
-    "MEMCACHED_ADDRESS": "",
+    "MEMCACHED_ENABLE": int(False),
+    "MEMCACHED_ADDRESS": "localhost",
     "MEMCACHED_PORT": 11211,
     "MEMCACHED_TIMEOUT": 1,
     "MEMCACHED_CACHE_EXPIRE": 60 * 10,

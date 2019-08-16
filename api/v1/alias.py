@@ -21,10 +21,9 @@ class AliasHandler(web.RequestHandler):
         src = data['src']
         dst = data['dst']
 
-        v = Validator()
-        if not v.is_contains_unresolved_char_only(src):
+        if not Validator.is_contains_unresolved_char_only(src):
             raise web.HTTPError(400, 'src url can only contains unresolved char.')
-        if not v.is_url_legal(dst):
+        if not Validator.is_url_legal(dst):
             raise web.HTTPError(400, 'dst url illegal.')
 
         suc, err = self.model.insert(src, dst)
