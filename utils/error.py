@@ -1,6 +1,4 @@
-class SourceIllegal(Exception):
-    pass
+class CodeError(BaseException):
 
-
-class DestinationIllegal(Exception):
-    pass
+    def __init__(self, code):
+        self.code = code

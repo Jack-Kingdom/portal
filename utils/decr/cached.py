@@ -30,19 +30,30 @@ def cached(to_key, clients, prefix=None,
     def wrapper(func):
         @functools.wraps(func)
         def inner_wrapper(*args, **kwargs):
+            """
+            wrapped func
+            :param args: positional args
+            :param kwargs: optional args
+                if rewrite=True in kwargs, all cache layer will be penetrate and rewrite
+                if clear=True in kwargs, all cache layer's value will be cleared
+            :return: func result
+            """
             key = to_key(*args, **kwargs) if callable(to_key) else str(to_key)
             key = (prefix + key) if prefix else key
 
+            rewrite = kwargs.get('rewrite', False)
+            clear = kwargs.get('clear', False)
+
             if not clients:
-                return func(*args, **kwargs)
+                return func(*args, **kwargs) if not clear else None
 
             client = clients[0]
             rst = client.get(key)
-            if not rst:
+            if rewrite or not rst:
                 t = int(timeout * random.uniform(1 - ratio, 1 + ratio))
                 rst = cached(to_key=key, clients=clients[1:], prefix=None,
                              timeout=int(t * factor), ratio=ratio, factor=factor)(func)(*args, **kwargs)
-                client.set(key, rst, t)
+                client.set(key, rst, t) if not clear else client.delete(key)
             return rst
 
         return inner_wrapper

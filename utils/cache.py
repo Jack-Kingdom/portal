@@ -1,3 +1,4 @@
+import pickle
 from config import CONFIG
 from pymemcache.client.base import Client
 
@@ -9,6 +10,6 @@ def get_memcached_client():
     if not _memcached:
         _memcached = Client((CONFIG['MEMCACHED_ADDRESS'], CONFIG['MEMCACHED_PORT']),
                             timeout=CONFIG['MEMCACHED_TIMEOUT'],
-                            deserializer=lambda k, v, f: str(v, encoding='utf-8') if isinstance(v, bytes) else v)
-
+                            serializer=lambda k, v: (pickle.dumps(v), 0),
+                            deserializer=lambda k, v, f: pickle.loads(v))
     return _memcached

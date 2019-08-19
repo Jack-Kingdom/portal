@@ -4,13 +4,11 @@ used to check url is legal or not.
 """
 
 import re
-from utils.decr.singleton import SingletonDecorator
 
 unresolved_char_re = re.compile(r'[0-9a-zA-Z\-_.~]+')
 url_legal_re = re.compile(r"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$")
 
 
-@SingletonDecorator
 class Validator(object):
 
     @staticmethod

@@ -14,11 +14,9 @@ default_config = {
     "DB_PASSWORD": "root",
     "DATABASE": "portal",
 
-    "MEMCACHED_ENABLE": int(False),
     "MEMCACHED_ADDRESS": "localhost",
     "MEMCACHED_PORT": 11211,
     "MEMCACHED_TIMEOUT": 1,
-    "MEMCACHED_CACHE_EXPIRE": 60 * 10,
 
     "REDIRECT_STATUS_CODE": 302
 }
